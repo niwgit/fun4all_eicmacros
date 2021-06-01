@@ -29,10 +29,10 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   // PHG4ParticleGenerator generates particle
   // distributions in eta/phi/mom range
   PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
-  gen->set_name("e+");
+  gen->set_name("pi+");
   gen->set_vtx(0, 0, 0);
   gen->set_eta_range(-0.5, +0.5);
-  gen->set_mom_range(0.5, 0.5); // GeV/c
+  gen->set_mom_range(6.0, 6.0); // GeV/c
 //  gen->set_phi_range(0., 90. / 180. * TMath::Pi());  // 0-90 deg
   se->registerSubsystem(gen);
 

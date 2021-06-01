@@ -8,7 +8,7 @@
 #include <G4_Bbc.C>
 #include <G4_BlackHole.C>
 #include <G4_CEmc_EIC.C>
-#include <G4_DIRC.C>
+#include "../../common/G4_DIRC_new.C"
 #include <G4_EEMC.C>
 #include <G4_FEMC_EIC.C>
 #include <G4_FHCAL.C>
@@ -96,7 +96,7 @@ void G4Init()
   if (Enable::FEMC) FEMCInit();
   if (Enable::FHCAL) FHCALInit();
   if (Enable::EEMC) EEMCInit();
-  if (Enable::DIRC) DIRCInit();
+  if (Enable::DIRC_NEW) DIRC_newInit();
   if (Enable::RICH) RICHInit();
   if (Enable::AEROGEL) AerogelInit();
   if (Enable::USER) UserInit();
@@ -171,7 +171,7 @@ int G4Setup()
   //----------------------------------------
   // PID
 
-  if (Enable::DIRC) DIRCSetup(g4Reco);
+  if (Enable::DIRC_NEW) DIRC_newSetup(g4Reco);
   if (Enable::RICH) RICHSetup(g4Reco);
   if (Enable::AEROGEL) AerogelSetup(g4Reco);
 
