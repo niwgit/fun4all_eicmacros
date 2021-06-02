@@ -5,6 +5,7 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/SubsysReco.h>
 #include <g4detectors/PHG4CylinderSubsystem.h>
+#include <g4histos/G4HitNtuple.h>
 #include <g4main/PHG4ParticleGenerator.h>
 #include <g4main/PHG4TruthSubsystem.h>
 #include <g4main/PHG4Reco.h>
@@ -41,6 +42,8 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   g4Reco->set_field(1.5);  // 1.5 T solenoidal field
 
   G4EicDircSubsystem *eicdirc = new G4EicDircSubsystem();
+  eicdirc->SuperDetector("DIRC");
+  eicdirc->SetActive();
   g4Reco->registerSubsystem(eicdirc);
   
 
@@ -60,6 +63,9 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
 
   //---------------------------
 
+  G4HitNtuple *hitntup = new G4HitNtuple();
+  hitntup->AddNode("DIRC",0);
+  se->registerSubsystem(hitntup);
   //---------------------------
   // output DST file for further offlien analysis
   //---------------------------
