@@ -6,6 +6,7 @@
 #include <fun4all/SubsysReco.h>
 #include <g4detectors/PHG4CylinderSubsystem.h>
 #include <g4histos/G4HitNtuple.h>
+#include <g4histos/G4SnglTree.h>
 #include <g4main/PHG4ParticleGenerator.h>
 #include <g4main/PHG4TruthSubsystem.h>
 #include <g4main/PHG4Reco.h>
@@ -32,7 +33,7 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
   gen->set_name("pi+");
   gen->set_vtx(0, 0, 0);
-  gen->set_eta_range(-0.5, +0.5);
+  gen->set_eta_range(0,0);
   gen->set_mom_range(6.0, 6.0); // GeV/c
 //  gen->set_phi_range(0., 90. / 180. * TMath::Pi());  // 0-90 deg
   se->registerSubsystem(gen);
@@ -66,6 +67,11 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   G4HitNtuple *hitntup = new G4HitNtuple();
   hitntup->AddNode("DIRC",0);
   se->registerSubsystem(hitntup);
+  
+  G4SnglTree *dirc_tree = new G4SnglTree();
+  dirc_tree->AddNode("DIRC",0);
+  se->registerSubsystem(dirc_tree);
+  
   //---------------------------
   // output DST file for further offlien analysis
   //---------------------------
