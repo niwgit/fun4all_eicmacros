@@ -6,12 +6,14 @@
 #include <fun4all/SubsysReco.h>
 #include <g4detectors/PHG4CylinderSubsystem.h>
 #include <g4histos/G4HitNtuple.h>
-#include <g4histos/G4SnglTree.h>
+#include <g4eicdirc/G4DIRCTree.h>
 #include <g4main/PHG4ParticleGenerator.h>
+#include <g4main/PHG4ParticleGun.h>
 #include <g4main/PHG4TruthSubsystem.h>
 #include <g4main/PHG4Reco.h>
 #include <phool/recoConsts.h>
 #include <g4eicdirc/G4EicDircSubsystem.h>
+#include <Geant4/G4SystemOfUnits.hh>
 
 R__LOAD_LIBRARY(libfun4all.so)
 R__LOAD_LIBRARY(libg4testbench.so)
@@ -30,17 +32,30 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   //  rc->set_IntFlag("RANDOMSEED", 12345); // if you want to use a fixed seed
   // PHG4ParticleGenerator generates particle
   // distributions in eta/phi/mom range
+  
   PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
   gen->set_name("pi+");
   gen->set_vtx(0, 0, 0);
-  gen->set_eta_range(0,0);
+  gen->set_eta_range(0, 0);
+  //gen->set_eta_range(1.317, 1.317); // 30 deg
+  gen->set_phi_range(0., 0.);
   gen->set_mom_range(6.0, 6.0); // GeV/c
-//  gen->set_phi_range(0., 90. / 180. * TMath::Pi());  // 0-90 deg
   se->registerSubsystem(gen);
-
+  
+  
+  /*PHG4ParticleGun *gun = new PHG4ParticleGun();
+  gun->set_name("opticalphoton");  
+  gun->set_vtx(97, 0, 210 - 0.05);
+  //gun->set_mom(1.202e-09, 0.83e-09, 2.834e-09);
+  //gun->set_mom(-1.202e-09, 0.83e-09, 2.834e-09);
+  //gun->set_mom(-1.29e-09, -1.78e-09, 2.29e-09);
+  gun->set_mom(2.05e-09, 1.60e-09, 1.83e-09);
+  se->registerSubsystem(gun);
+  */
 
   PHG4Reco *g4Reco = new PHG4Reco();
-  g4Reco->set_field(1.5);  // 1.5 T solenoidal field
+  //g4Reco->set_field(1.5);  // 1.5 T solenoidal field
+  g4Reco->set_field(0.);
 
   G4EicDircSubsystem *eicdirc = new G4EicDircSubsystem();
   eicdirc->SuperDetector("DIRC");
@@ -68,10 +83,10 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   hitntup->AddNode("DIRC",0);
   se->registerSubsystem(hitntup);
   
-  G4SnglTree *dirc_tree = new G4SnglTree();
+  G4DIRCTree *dirc_tree = new G4DIRCTree();
   dirc_tree->AddNode("DIRC",0);
   se->registerSubsystem(dirc_tree);
-  
+    
   //---------------------------
   // output DST file for further offlien analysis
   //---------------------------
