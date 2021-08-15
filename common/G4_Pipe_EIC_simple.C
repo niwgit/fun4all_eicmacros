@@ -31,7 +31,7 @@ namespace G4PIPE
   double be_pipe_thickness = 3.1762 - be_pipe_radius;  // 760 um for sPHENIX
   double be_pipe_length_plus = 66.8;                   // +z beam pipe extend.
   double be_pipe_length_neg = -79.8;                   // -z beam pipe extend.
-  bool use_forward_pipes = false;
+  bool use_forward_pipes = true;
 }  // namespace G4PIPE
 
 void PipeInit()
@@ -55,7 +55,7 @@ double Pipe(PHG4Reco* g4Reco,
             double radius)
 {
   bool AbsorberActive = Enable::ABSORBER || Enable::PIPE_ABSORBER;
-  bool OverlapCheck = Enable::OVERLAPCHECK || Enable::PIPE_OVERLAPCHECK;
+  bool OverlapCheck = Enable::PIPE_OVERLAPCHECK;  // detach from Enable::OVERLAPCHECK ||  to suppress GDML validation messages
   int verbosity = std::max(Enable::VERBOSITY, Enable::PIPE_VERBOSITY);
   // process pipe extentions?
   const bool do_pipe_hadron_forward_extension = G4PIPE::use_forward_pipes && true;
@@ -70,8 +70,8 @@ double Pipe(PHG4Reco* g4Reco,
          << " larger than pipe inner radius: " << G4PIPE::be_pipe_radius << endl;
     gSystem->Exit(-1);
   }
-  
-  // vacuum inside mid-rapidity beryllium beampipe
+
+  // mid-rapidity beryillium pipe
   PHG4CylinderSubsystem* cyl = new PHG4CylinderSubsystem("VAC_BE_PIPE", 0);
   cyl->set_double_param("radius", 0.0);
   cyl->set_int_param("lengthviarapidity", 0);
@@ -84,7 +84,6 @@ double Pipe(PHG4Reco* g4Reco,
   if (AbsorberActive) cyl->SetActive();
   g4Reco->registerSubsystem(cyl);
 
-  // mid-rapidity beryllium beam-pipe
   cyl = new PHG4CylinderSubsystem("BE_PIPE", 1);
   cyl->set_double_param("radius", G4PIPE::be_pipe_radius);
   cyl->set_int_param("lengthviarapidity", 0);
@@ -101,26 +100,42 @@ double Pipe(PHG4Reco* g4Reco,
 
   radius += no_overlapp;
 
-  // electron-going section of the beampipe
   if (do_pipe_electron_forward_extension)
   {
-    PHG4GDMLSubsystem* gdml = new PHG4GDMLSubsystem("ElectronForwardEnvelope");
-    gdml->set_string_param("GDMPath", string(getenv("CALIBRATIONROOT")) + "/Beam/Detector_chamber_3-20-20.G4Import.gdml");
-    gdml->set_string_param("TopVolName", "ElectronForwardEnvelope");
-    gdml->set_int_param("skip_DST_geometry_export", 1);  // do not export extended beam pipe as it is not supported by TGeo and outside Kalman filter acceptance
-    gdml->OverlapCheck(OverlapCheck);
-    g4Reco->registerSubsystem(gdml);
+    if (Enable::IP6)
+    {
+      PHG4GDMLSubsystem* gdml = new PHG4GDMLSubsystem("ElectronForwardEnvelope");
+      gdml->set_string_param("GDMPath", string(getenv("CALIBRATIONROOT")) + "/Beam/Detector_chamber_3-20-20.G4Import.v2.gdml");
+      gdml->set_string_param("TopVolName", "ElectronForwardEnvelope");
+      gdml->set_double_param("rot_z", 180); // flip crossing sign convension after July-2021
+      gdml->set_int_param("skip_DST_geometry_export", 1);  // do not export extended beam pipe as it is not supported by TGeo and outside Kalman filter acceptance
+      gdml->OverlapCheck(OverlapCheck);
+      g4Reco->registerSubsystem(gdml);
+    }
+    if (Enable::IP8)
+    {
+      cout <<__PRETTY_FUNCTION__<<" IP8 beam chamber not defined yet! Consider disable G4PIPE::use_forward_pipes"<<endl;
+      exit(1);
+    }
   }
 
-  // hadron-going section of the beampipe
   if (do_pipe_hadron_forward_extension)
   {
-    PHG4GDMLSubsystem* gdml = new PHG4GDMLSubsystem("HadronForwardEnvelope");
-    gdml->set_string_param("GDMPath", string(getenv("CALIBRATIONROOT")) + "/Beam/Detector_chamber_3-20-20.G4Import.gdml");
-    gdml->set_string_param("TopVolName", "HadronForwardEnvelope");
-    gdml->set_int_param("skip_DST_geometry_export", 1);  // do not export extended beam pipe as it is not supported by TGeo and outside Kalman filter acceptance
-    gdml->OverlapCheck(OverlapCheck);
-    g4Reco->registerSubsystem(gdml);
+    if (Enable::IP6)
+    {
+      PHG4GDMLSubsystem* gdml = new PHG4GDMLSubsystem("HadronForwardEnvelope");
+      gdml->set_string_param("GDMPath", string(getenv("CALIBRATIONROOT")) + "/Beam/Detector_chamber_3-20-20.G4Import.v2.gdml");
+      gdml->set_string_param("TopVolName", "HadronForwardEnvelope");
+      gdml->set_int_param("skip_DST_geometry_export", 1);  // do not export extended beam pipe as it is not supported by TGeo and outside Kalman filter acceptance
+      gdml->set_double_param("rot_z", 180); // flip crossing sign convension after July-2021
+      gdml->OverlapCheck(OverlapCheck);
+      g4Reco->registerSubsystem(gdml);
+    }
+    if (Enable::IP8)
+    {
+      cout <<__PRETTY_FUNCTION__<<" IP8 beam chamber not defined yet! Consider disable G4PIPE::use_forward_pipes"<<endl;
+      exit(1);
+    }
   }
 
   return radius;

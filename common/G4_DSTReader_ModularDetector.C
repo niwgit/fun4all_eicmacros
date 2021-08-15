@@ -5,7 +5,7 @@
 
 #include <G4_Barrel_EIC.C>
 #include <G4_CEmc_EIC.C>
-#include "../../common/G4_DIRC_new.C"
+#include <G4_DIRC.C>
 #include <G4_EEMC.C>
 #include <G4_FEMC_EIC.C>
 #include <G4_FHCAL.C>
@@ -15,7 +15,7 @@
 #include <G4_HcalOut_ref.C>
 #include <G4_Magnet.C>
 #include <G4_Mvtx_EIC.C>
-#include <G4_RICH.C>
+#include <G4_dRICH.C>
 #include <G4_TPC_EIC.C>
 #include <G4_BECAL.C>
 
@@ -187,7 +187,7 @@ void G4DSTreader_EICDetector(const string &outputFile = "G4sPHENIXCells.root")
     {
       ana->AddNode("EEMC");
     }
-    if (Enable::DIRC_NEW)
+    if (Enable::DIRC)
     {
       ana->AddNode("DIRC");
     }
