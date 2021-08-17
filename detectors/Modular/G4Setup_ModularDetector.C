@@ -11,7 +11,8 @@
 #include <G4_GEM_EIC.C>
 #include <G4_Bbc.C>
 #include <G4_CEmc_EIC.C>
-#include <G4_DIRC.C>
+//#include <G4_DIRC.C>
+#include "../../common/G4_DIRC_new.C"
 #include <G4_DRCALO.C>
 #include <G4_EEMC.C>
 #include <G4_EEMC_hybrid.C>
@@ -104,7 +105,8 @@ void G4Init()
   if (Enable::MVTX) MvtxInit();
   if (Enable::TPC) TPCInit();
   // PID
-  if (Enable::DIRC) DIRCInit();
+  //if (Enable::DIRC) DIRCInit();
+  if (Enable::DIRC_NEW) DIRC_newInit();
   if (Enable::RICH) RICHInit();
   if (Enable::mRICH) mRICHInit();
   if (Enable::AEROGEL) AerogelInit();
@@ -210,7 +212,8 @@ int G4Setup(TString specialSetting = ""){
   
   //----------------------------------------
   // PID
-  if (Enable::DIRC) DIRCSetup(g4Reco);
+  //if (Enable::DIRC) DIRCSetup(g4Reco);
+  if (Enable::DIRC_NEW) DIRC_newSetup(g4Reco);
   if (Enable::RICH) RICHSetup(g4Reco);
   if (Enable::AEROGEL) AerogelSetup(g4Reco);
   if (Enable::mRICH) mRICHSetup(g4Reco);

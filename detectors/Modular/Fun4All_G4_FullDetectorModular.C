@@ -238,12 +238,12 @@ int Fun4All_G4_FullDetectorModular(
   //  Enable::VERBOSITY = 1;
 
   //  Enable::BBC = true;
-  Enable::BBCFAKE = true; // Smeared vtx and t0, use if you don't want real BBC in simulation
+  Enable::BBCFAKE = false; // Smeared vtx and t0, use if you don't want real BBC in simulation
 
   // whether to simulate the Be section of the beam pipe
-  Enable::PIPE = true;
+  Enable::PIPE = false;
   // EIC beam pipe extension beyond the Be-section:
-  G4PIPE::use_forward_pipes = true;
+  G4PIPE::use_forward_pipes = false;
   //EIC hadron far forward magnets and detectors. IP6 and IP8 are incompatible (pick either or);
   Enable::HFARFWD_MAGNETS = false;
   Enable::HFARFWD_VIRTUAL_DETECTORS = false;
@@ -269,7 +269,7 @@ int Fun4All_G4_FullDetectorModular(
     } else {
       Enable::FGEM_ORIG = false;
     }
-  }
+    }
   
   // barrel tracker (LANL)
   if (specialSetting.Contains("BARREL"))
@@ -278,15 +278,15 @@ int Fun4All_G4_FullDetectorModular(
     Enable::FST = true;
   
   // all silicon tracker version (LBL)
-  if(specialSetting.Contains("ALLSILICON")){
+  /*if(specialSetting.Contains("ALLSILICON")){
     Enable::ALLSILICON = true;
     Enable::ALLSILICON_ABSORBER = true;
-  }
+    }*/
   
   // LGAD layers
   if(specialSetting.Contains("TTL")){
-    Enable::FTTL = true;
-    Enable::ETTL = true;
+    //Enable::FTTL = true;
+    //Enable::ETTL = true;
     Enable::CTTL = true;
     G4TTL::SETTING::optionCEMC    = true;
   }
@@ -306,22 +306,23 @@ int Fun4All_G4_FullDetectorModular(
   }
   if (specialSetting.Contains("TREXTOUT"))
     Enable::TRACKING_EVAL_DETAILED = Enable::TRACKING_EVAL && true;
-
+  
   G4TRACKING::DISPLACED_VERTEX = true;  // this option exclude vertex in the track fitting and use RAVE to reconstruct primary and 2ndary vertexes
   
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // geometry - barrel
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // PID detectors
-  Enable::DIRC = true;
-  G4DIRC::SETTING::USECEMCGeo   = true;
+  //Enable::DIRC = true;
+  Enable::DIRC_NEW = true;
+  //G4DIRC::SETTING::USECEMCGeo   = true;
   
   // sPHENIX SPACAL reuse
-  Enable::CEMC = true;
+  Enable::CEMC = false;
   //  Enable::CEMC_ABSORBER = true;
   
   // sPHENIX HCal inner reuse
-  Enable::HCALIN = true;
+  Enable::HCALIN = false;
   G4HCALIN::SETTING::USECEMCGeo = true;
   //  Enable::HCALIN_ABSORBER = true;
   
@@ -331,10 +332,10 @@ int Fun4All_G4_FullDetectorModular(
     Enable::CEMC    = false;
     Enable::HCALIN  = true; // for now deactivated due to crash
   }
-  Enable::MAGNET = true;
+  Enable::MAGNET = false;
 
   // sPHENIX HCal outer reuse
-  Enable::HCALOUT = true;
+  Enable::HCALOUT = false;
   //  Enable::HCALOUT_ABSORBER = true;
 
 
@@ -342,15 +343,15 @@ int Fun4All_G4_FullDetectorModular(
   // geometry - 'hadron' direction
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // PID detectors - RICH's
-  Enable::RICH = true;
+  Enable::RICH = false;
 //   Enable::AEROGEL = true;
 
   // PHENIX EMCal shashlik reuse
-  Enable::FEMC = true;
+  Enable::FEMC = false;
   //  Enable::FEMC_ABSORBER = true;
 
   // STAR forward HCal
-  Enable::FHCAL = true;
+  Enable::FHCAL = false;
   if(specialSetting.Contains("FEMCSTANDALONE") || specialSetting.Contains("LFHCAL"))
     Enable::FHCAL = false;
   Enable::FHCAL_VERBOSITY = 0;
@@ -381,16 +382,16 @@ int Fun4All_G4_FullDetectorModular(
   // EICDetector geometry - 'electron' direction
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   // PID detectors - RICH's
-  Enable::mRICH = true;
+  Enable::mRICH = false;
 
-  Enable::EEMC  = true;
+  Enable::EEMC  = false;
   Enable::EEMCH = false;
   if (specialSetting.Contains("EEMCH")){
     Enable::EEMCH = true;
     Enable::EEMC  = false;
     G4EEMCH::SETTING::USECEMCGeo  = true;
   }
-  Enable::EHCAL = true;
+  Enable::EHCAL = false;
   if(specialSetting.Contains("noEHCAL"))
     Enable::EHCAL = false;
   Enable::EHCAL_VERBOSITY = 0;
@@ -414,7 +415,7 @@ int Fun4All_G4_FullDetectorModular(
     G4TRACKING::PROJECTION_EEMC   = ( Enable::EEMC || Enable::EEMCH ) && true;  
     G4TRACKING::PROJECTION_EHCAL  = Enable::EHCAL && true;
     G4TRACKING::PROJECTION_DRCALO = Enable::DRCALO && true;
-  }
+    }
 
 
   // ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1032,10 +1033,10 @@ void ParseTString(TString &specialSetting)
 
   if (specialSetting.Contains("TTLBasicGeo")){
     G4TTL::SETTING::optionBasicGeo    = true;
-  } else {
+  } /*else {
     // deactivate DIRC basic supports in case the updated TTL is used -> already contains supports
     G4DIRC::SETTING::USEskinSupports = false;
-  }
+    }*/
 
   if (specialSetting.Contains("ACLGAD"))
     G4TTL::SETTING::optionGran    = 2;

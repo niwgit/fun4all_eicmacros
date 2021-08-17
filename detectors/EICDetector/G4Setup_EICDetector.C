@@ -24,6 +24,7 @@
 #include <G4_RICH.C>
 #include <G4_TPC_EIC.C>
 #include <G4_Tracking_EIC.C>
+#include <G4_TTL_EIC.C>
 #include <G4_User.C>
 #include <G4_World.C>
 #include <G4_hFarFwdBeamLine_EIC.C>
@@ -99,6 +100,7 @@ void G4Init()
   if (Enable::FHCAL) FHCALInit();
   if (Enable::EEMC) EEMCInit();
   if (Enable::DIRC_NEW) DIRC_newInit();
+  if (Enable::CTTL) TTL_Init();
   if (Enable::RICH) RICHInit();
   if (Enable::AEROGEL) AerogelInit();
   if (Enable::USER) UserInit();
@@ -176,6 +178,7 @@ int G4Setup()
   // PID
 
   if (Enable::DIRC_NEW) DIRC_newSetup(g4Reco);
+  if (Enable::CTTL) CTTLSetup(g4Reco,"specialSetting");
   if (Enable::RICH) RICHSetup(g4Reco);
   if (Enable::AEROGEL) AerogelSetup(g4Reco);
 
