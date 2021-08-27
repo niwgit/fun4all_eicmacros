@@ -288,7 +288,7 @@ int Fun4All_G4_FullDetectorModular(
     //Enable::FTTL = true;
     //Enable::ETTL = true;
     Enable::CTTL = true;
-    G4TTL::SETTING::optionCEMC    = true;
+    G4TTL::SETTING::optionCEMC    = false;
   }
   // mvtx/tpc tracker
   if(specialSetting.Contains("MVTX")){

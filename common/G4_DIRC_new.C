@@ -13,46 +13,58 @@
 
 R__LOAD_LIBRARY(libg4detectors.so)
 
-/*!
- * \file G4_DIRC.C
- * \brief Macro setting up the barrel DIRC
- * \author Jin Huang <jhuang@bnl.gov>
- * \version $Revision: 1.3 $
- * \date $Date: 2013/10/09 01:08:17 $
- */
-
 namespace Enable
 {
   bool DIRC_NEW = false;
   bool DIRC_NEW_OVERLAPCHECK = false;
 }  // namespace Enable
 
-namespace G4DIRC_NEW
+/*namespace G4DIRC_NEW
 {
-  double radiator_R = 83.65;
-  double length = 400;
-  double z_shift = -75;  //115
-  double z_start = z_shift + length / 2.;
-  double z_end = z_shift - length / 2.;
-  double outer_skin_radius = 89.25;
-}  // namespace G4DIRC
-
+  double radius;
+  double zOffset;
+  double halflength;
+}  // namespace G4DIRC_NEW
+*/
 void DIRC_newInit()
 {
+  //G4DIRC_NEW::radius = 80.0;
+  //G4DIRC_NEW::zOffset = -40.0;
+  //G4DIRC_NEW::halflength = 218.0;
+
   //BlackHoleGeometry::max_radius = std::max(BlackHoleGeometry::max_radius, G4DIRC_NEW::outer_skin_radius);
   //BlackHoleGeometry::max_z = std::max(BlackHoleGeometry::max_z, G4DIRC_NEW::z_start);
   //BlackHoleGeometry::min_z = std::min(BlackHoleGeometry::min_z, G4DIRC_NEW::z_end);
 }
 
-//! Babar DIRC (Without most of support structure)
-//! Ref: I. Adam et al. The DIRC particle identification system for the BaBar experiment.
-//! Nucl. Instrum. Meth., A538:281-357, 2005. doi:10.1016/j.nima.2004.08.129.
 void DIRC_newSetup(PHG4Reco *g4Reco)
 {
   bool OverlapCheck = Enable::OVERLAPCHECK || Enable::DIRC_NEW_OVERLAPCHECK;
 
   G4EicDircSubsystem *dirc;
   dirc = new G4EicDircSubsystem("DIRC");
+  //dirc->set_double_param("place_z", G4DIRC_NEW::zOffset);                    
+  //dirc->set_double_param("rMin", G4DIRC_NEW::radius);                    
+  //dirc->set_double_param("length", 2.0 * G4DIRC_NEW::halflength);
+
+  dirc->set_double_param("NBars", 11);
+  dirc->set_double_param("Radius", 75.0 * cm);
+  dirc->set_double_param("Prizm_width", 38.65 * cm);
+  dirc->set_double_param("Prizm_length", 30.0 * cm);
+  dirc->set_double_param("Prizm_height_at_lens", 3.7 * cm);
+  dirc->set_double_param("Bar_thickness", 1.725 * cm);
+  dirc->set_double_param("Bar_width", 3.5 * cm);
+  dirc->set_double_param("BarL_length", 122.5 * cm);
+  dirc->set_double_param("BarS_length", 56.0 * cm);
+  dirc->set_double_param("Mirror_height", 2.0 * cm);
+  dirc->set_double_param("z_shift", -43.75 * cm);
+  dirc->set_int_param("Geom_type", 0); // 0-whole DIRC, 1-one bar box
+  dirc->set_int_param("Lens_id", 3); // 3- 3-layer spherical lens
+  dirc->set_int_param("MCP_rows", 6);
+  dirc->set_int_param("MCP_columns", 4);
+  dirc->set_int_param("NBoxes", 12); // number of bar boxes
+  dirc->set_int_param("Bar_pieces", 4); // pieces glued in one bar
+  
   g4Reco->registerSubsystem(dirc); 
 }
 #endif

@@ -307,8 +307,8 @@ int Fun4All_G4_EICDetector(
 
   // EICDetector geometry - barrel
   Enable::DIRC_NEW = true;
-  Enable::CTTL = true;
-  G4TTL::SETTING::optionCEMC    = true;
+  //Enable::CTTL = true;
+  //G4TTL::SETTING::optionCEMC    = false;
 
   // EICDetector geometry - 'hadron' direction
   Enable::RICH = false;

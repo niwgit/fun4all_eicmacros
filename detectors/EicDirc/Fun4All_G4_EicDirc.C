@@ -45,11 +45,8 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   
   /*PHG4ParticleGun *gun = new PHG4ParticleGun();
   gun->set_name("opticalphoton");  
-  gun->set_vtx(97, 0, 210 - 0.05);
-  //gun->set_mom(1.202e-09, 0.83e-09, 2.834e-09);
-  //gun->set_mom(-1.202e-09, 0.83e-09, 2.834e-09);
-  //gun->set_mom(-1.29e-09, -1.78e-09, 2.29e-09);
-  gun->set_mom(2.05e-09, 1.60e-09, 1.83e-09);
+  gun->set_vtx(75, 0, -255.49 + 0.05);
+  gun->set_mom(-2.05e-09, 1.60e-09, -1.83e-09);
   se->registerSubsystem(gun);
   */
 
@@ -58,6 +55,23 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   g4Reco->set_field(0.);
 
   G4EicDircSubsystem *eicdirc = new G4EicDircSubsystem();
+  eicdirc->set_double_param("NBars", 11);
+  eicdirc->set_double_param("Radius", 75.0 * cm);
+  eicdirc->set_double_param("Prizm_width", 38.65 * cm);
+  eicdirc->set_double_param("Prizm_length", 30.0 * cm);
+  eicdirc->set_double_param("Prizm_height_at_lens", 3.7 * cm);
+  eicdirc->set_double_param("Bar_thickness", 1.725 * cm);
+  eicdirc->set_double_param("Bar_width", 3.5 * cm);
+  eicdirc->set_double_param("BarL_length", 122.5 * cm);
+  eicdirc->set_double_param("BarS_length", 56.0 * cm);
+  eicdirc->set_double_param("Mirror_height", 2.0 * cm);
+  eicdirc->set_double_param("z_shift", -43.75 * cm);
+  eicdirc->set_int_param("Geom_type", 0); // 0-whole DIRC, 1-one bar box
+  eicdirc->set_int_param("Lens_id", 3); // 3- 3-layer spherical lens
+  eicdirc->set_int_param("MCP_rows", 6);
+  eicdirc->set_int_param("MCP_columns", 4);
+  eicdirc->set_int_param("NBoxes", 12); // number of bar boxes
+  eicdirc->set_int_param("Bar_pieces", 4); // pieces glued in one bar
   eicdirc->SuperDetector("DIRC");
   eicdirc->SetActive();
   g4Reco->registerSubsystem(eicdirc);
