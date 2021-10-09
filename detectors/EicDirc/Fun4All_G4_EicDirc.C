@@ -5,7 +5,7 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/SubsysReco.h>
 #include <g4detectors/PHG4CylinderSubsystem.h>
-#include <g4histos/G4HitNtuple.h>
+//#include <g4histos/G4HitNtuple.h>
 #include <g4eicdirc/G4DIRCTree.h>
 #include <g4main/PHG4ParticleGenerator.h>
 #include <g4main/PHG4ParticleGun.h>
@@ -20,7 +20,7 @@ R__LOAD_LIBRARY(libg4testbench.so)
 R__LOAD_LIBRARY(libg4detectors.so)
 R__LOAD_LIBRARY(libg4eicdirc.so)
 
-int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
+int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
 {
   ///////////////////////////////////////////
   // Make the Server
@@ -34,15 +34,25 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   // distributions in eta/phi/mom range
   
   PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
-  gen->set_name("pi+");
+  //gen->set_name("pi+");
+  gen->set_pid(pid);
   gen->set_vtx(0, 0, 0);
-  gen->set_eta_range(0, 0);
+  gen->set_eta_range(eta, eta);
   //gen->set_eta_range(1.317, 1.317); // 30 deg
   gen->set_phi_range(0., 0.);
   gen->set_mom_range(6.0, 6.0); // GeV/c
   se->registerSubsystem(gen);
   
-  
+
+  /*PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
+  gen->set_pid(11);
+  gen->set_vtx(76.085*cm, -1.22*cm, -257*cm);
+  //gen->set_mom_range(50.0e-03, 50.0e-03);
+  //gen->set_eta_range(-3,3);
+  //gen->set_mom(0.2075*MeV, 1.609*MeV, -40.12*MeV);
+  //gen->set_mom(0, 0, -50*MeV);
+  se->registerSubsystem(gen);
+  */
   /*PHG4ParticleGun *gun = new PHG4ParticleGun();
   gun->set_name("opticalphoton");  
   gun->set_vtx(75, 0, -255.49 + 0.05);
@@ -59,7 +69,7 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   eicdirc->set_double_param("Radius", 75.0 * cm);
   eicdirc->set_double_param("Prizm_width", 38.65 * cm);
   eicdirc->set_double_param("Prizm_length", 30.0 * cm);
-  eicdirc->set_double_param("Prizm_height_at_lens", 3.7 * cm);
+  eicdirc->set_double_param("Prizm_height_at_lens", 5.0 * cm);
   eicdirc->set_double_param("Bar_thickness", 1.725 * cm);
   eicdirc->set_double_param("Bar_width", 3.5 * cm);
   eicdirc->set_double_param("BarL_length", 122.5 * cm);
@@ -72,8 +82,11 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   eicdirc->set_int_param("MCP_columns", 4);
   eicdirc->set_int_param("NBoxes", 12); // number of bar boxes
   eicdirc->set_int_param("Bar_pieces", 4); // pieces glued in one bar
+  
   eicdirc->SuperDetector("DIRC");
   eicdirc->SetActive();
+  //eicdirc->OverlapCheck(true);
+  eicdirc->Verbosity(1);
   g4Reco->registerSubsystem(eicdirc);
   
 
@@ -85,7 +98,7 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
   cyl->SetActive();
   cyl->BlackHole(); // eats everything
   g4Reco->registerSubsystem(cyl);
-
+  
   PHG4TruthSubsystem *truth = new PHG4TruthSubsystem();
   g4Reco->registerSubsystem(truth);
 
@@ -93,24 +106,27 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const char *outfile = NULL)
 
   //---------------------------
 
-  G4HitNtuple *hitntup = new G4HitNtuple();
+  /*G4HitNtuple *hitntup = new G4HitNtuple();
   hitntup->AddNode("DIRC",0);
   se->registerSubsystem(hitntup);
-  
-  G4DIRCTree *dirc_tree = new G4DIRCTree();
+  */
+  G4DIRCTree *dirc_tree = new G4DIRCTree("G4DIRCTree", outputPath + "/" + outputFile);
   dirc_tree->AddNode("DIRC",0);
   se->registerSubsystem(dirc_tree);
     
   //---------------------------
   // output DST file for further offlien analysis
   //---------------------------
-  if (outfile)
+  if (DSToutfile)
   {
-    Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outfile);
+    Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outputPath + "/" + DSToutfile);
     se->registerOutputManager(out);
   }
   Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
   se->registerInputManager(in);
+
+  //PHG4Reco *g4 = (PHG4Reco *) se->getSubsysReco("PHG4RECO");
+  //g4->ApplyCommand("/tracking/verbose 3");
 
   if (nEvents > 0)
   {
