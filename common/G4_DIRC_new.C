@@ -41,8 +41,8 @@ void DIRC_newSetup(PHG4Reco *g4Reco)
 {
   bool OverlapCheck = Enable::OVERLAPCHECK || Enable::DIRC_NEW_OVERLAPCHECK;
 
-  G4EicDircSubsystem *dirc;
-  dirc = new G4EicDircSubsystem("DIRC");
+  G4EicDircSubsystem *eicdirc;
+  eicdirc = new G4EicDircSubsystem("DIRC");
 
   eicdirc->set_double_param("NBars", 10);
   eicdirc->set_double_param("Radius", 72.96 * cm);
@@ -62,6 +62,6 @@ void DIRC_newSetup(PHG4Reco *g4Reco)
   eicdirc->set_int_param("NBoxes", 12); // number of bar boxes                                                                 
   eicdirc->set_int_param("Bar_pieces", 4); // pieces glued in one bar
 
-  g4Reco->registerSubsystem(dirc); 
+  g4Reco->registerSubsystem(eicdirc); 
 }
 #endif
