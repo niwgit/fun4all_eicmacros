@@ -36,15 +36,23 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
   PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
   //gen->set_name("pi+");
   gen->set_pid(pid);
-  gen->set_vtx(0, 0, 0);
+  gen->set_vtx(0, 1.75, 0);
   gen->set_eta_range(eta, eta);
   //gen->set_eta_range(1.317, 1.317); // 30 deg
-  //gen->set_phi_range(0., 0.);
-  gen->set_phi_range(1.5*(TMath::Pi()/180.), 1.5*(TMath::Pi()/180.));
+  gen->set_z_range(0., 0.);
+  gen->set_phi_range(0., 0.);
+  //gen->set_phi_range(1.5*(TMath::Pi()/180.), 1.5*(TMath::Pi()/180.));
   //gen->set_phi_range(0., 2*TMath::Pi());
   gen->set_mom_range(6.0, 6.0); // GeV/c
   se->registerSubsystem(gen);
   
+
+  /*PHG4ParticleGun *gun = new PHG4ParticleGun();                                                                               
+  gun->set_pid(pid);
+  gun->set_vtx(0, 1.75, 0);                                                                                          
+  gun->set_mom(100.0, 0, 0);                                                                                 
+  se->registerSubsystem(gun);                                                                                                 
+  */
 
   /*PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
   gen->set_pid(11);
@@ -64,12 +72,10 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
 
   PHG4Reco *g4Reco = new PHG4Reco();
   //g4Reco->set_field(1.5);  // 1.5 T solenoidal field
-  g4Reco->set_field(0.);
+  //g4Reco->set_field(0.);
+  g4Reco->set_field_map(string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root"),PHFieldConfig::kField2D);
 
   G4EicDircSubsystem *eicdirc = new G4EicDircSubsystem();
-  //eicdirc->set_double_param("NBars", 11);
-  //eicdirc->set_double_param("Radius", 75.0 * cm);
-  //eicdirc->set_double_param("Prizm_width", 38.65 * cm);
   eicdirc->set_double_param("NBars", 10);
   eicdirc->set_double_param("Radius", 72.96 * cm);
   eicdirc->set_double_param("Prizm_width", 35.135 * cm);  
@@ -81,16 +87,18 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
   eicdirc->set_double_param("BarS_length", 56.0 * cm);
   eicdirc->set_double_param("Mirror_height", 2.0 * cm);
   eicdirc->set_double_param("z_shift", -43.75 * cm);
-  eicdirc->set_int_param("Geom_type", 1); // 0-whole DIRC, 1-one bar box
+  eicdirc->set_int_param("Geom_type", 0); // 0-whole DIRC, 1-one bar box
   eicdirc->set_int_param("Lens_id", 3); // 3- 3-layer spherical lens
   eicdirc->set_int_param("MCP_rows", 6);
   eicdirc->set_int_param("MCP_columns", 4);
   eicdirc->set_int_param("NBoxes", 12); // number of bar boxes
   eicdirc->set_int_param("Bar_pieces", 4); // pieces glued in one bar
-  
+
+  eicdirc->set_int_param("disable_photon_sim", 0);  // if true, disable photon simulations
+
   eicdirc->SuperDetector("DIRC");
   eicdirc->SetActive();
-  eicdirc->OverlapCheck(true);
+  //eicdirc->OverlapCheck(true);
   eicdirc->Verbosity(1);
   g4Reco->registerSubsystem(eicdirc);
   
