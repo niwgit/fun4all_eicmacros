@@ -21,6 +21,7 @@ R__LOAD_LIBRARY(libg4detectors.so)
 R__LOAD_LIBRARY(libg4eicdirc.so)
 
 int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
+//int Fun4All_G4_EicDirc(const int nEvents = 1000, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
 {
   ///////////////////////////////////////////
   // Make the Server
@@ -34,33 +35,23 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
   // distributions in eta/phi/mom range
   
   PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
-  //gen->set_name("pi+");
   gen->set_pid(pid);
   gen->set_vtx(0, 1.75, 0);
   gen->set_eta_range(eta, eta);
-  //gen->set_eta_range(1.317, 1.317); // 30 deg
   gen->set_z_range(0., 0.);
   gen->set_phi_range(0., 0.);
-  //gen->set_phi_range(1.5*(TMath::Pi()/180.), 1.5*(TMath::Pi()/180.));
   //gen->set_phi_range(0., 2*TMath::Pi());
   gen->set_mom_range(6.0, 6.0); // GeV/c
   se->registerSubsystem(gen);
   
 
-  /*PHG4ParticleGun *gun = new PHG4ParticleGun();                                                                               
-  gun->set_pid(pid);
-  gun->set_vtx(0, 1.75, 0);                                                                                          
-  gun->set_mom(100.0, 0, 0);                                                                                 
-  se->registerSubsystem(gun);                                                                                                 
-  */
-
   /*PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
-  gen->set_pid(11);
-  gen->set_vtx(76.085*cm, -1.22*cm, -257*cm);
-  //gen->set_mom_range(50.0e-03, 50.0e-03);
-  //gen->set_eta_range(-3,3);
-  //gen->set_mom(0.2075*MeV, 1.609*MeV, -40.12*MeV);
-  //gen->set_mom(0, 0, -50*MeV);
+  gen->set_name("opticalphoton");
+  gen->set_vtx(72.96, 1.75, -255.44);
+  gen->set_eta_range(-4.0, 0.);
+  gen->set_z_range(-255.44, -255.44);
+  gen->set_phi_range(0., 2*TMath::Pi());
+  gen->set_mom_range(3.18e-09, 3.18e-09); // GeV/c                                                                              
   se->registerSubsystem(gen);
   */
   /*PHG4ParticleGun *gun = new PHG4ParticleGun();
@@ -72,8 +63,8 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
 
   PHG4Reco *g4Reco = new PHG4Reco();
   //g4Reco->set_field(1.5);  // 1.5 T solenoidal field
-  //g4Reco->set_field(0.);
-  g4Reco->set_field_map(string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root"),PHFieldConfig::kField2D);
+  g4Reco->set_field(0.);
+  //g4Reco->set_field_map(string(getenv("CALIBRATIONROOT")) + string("/Field/Map/sPHENIX.2d.root"),PHFieldConfig::kField2D);
 
   G4EicDircSubsystem *eicdirc = new G4EicDircSubsystem();
   eicdirc->set_double_param("NBars", 10);
@@ -87,7 +78,7 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
   eicdirc->set_double_param("BarS_length", 56.0 * cm);
   eicdirc->set_double_param("Mirror_height", 2.0 * cm);
   eicdirc->set_double_param("z_shift", -43.75 * cm);
-  eicdirc->set_int_param("Geom_type", 0); // 0-whole DIRC, 1-one bar box
+  eicdirc->set_int_param("Geom_type", 1); // 0-whole DIRC, 1-one bar box
   eicdirc->set_int_param("Lens_id", 3); // 3- 3-layer spherical lens
   eicdirc->set_int_param("MCP_rows", 6);
   eicdirc->set_int_param("MCP_columns", 4);
