@@ -5,10 +5,13 @@
 #include <fun4all/Fun4AllServer.h>
 #include <fun4all/SubsysReco.h>
 #include <g4detectors/PHG4CylinderSubsystem.h>
+//#include <g4eval/PHG4DSTReader.h>
 //#include <g4histos/G4HitNtuple.h>
 #include <g4eicdirc/G4DIRCTree.h>
+#include <g4eicdirc/G4LUTTree.h>
 #include <g4main/PHG4ParticleGenerator.h>
 #include <g4main/PHG4ParticleGun.h>
+#include <g4main/PHG4SimpleEventGenerator.h>
 #include <g4main/PHG4TruthSubsystem.h>
 #include <g4main/PHG4Reco.h>
 #include <phool/recoConsts.h>
@@ -20,8 +23,12 @@ R__LOAD_LIBRARY(libg4testbench.so)
 R__LOAD_LIBRARY(libg4detectors.so)
 R__LOAD_LIBRARY(libg4eicdirc.so)
 
-int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
-//int Fun4All_G4_EicDirc(const int nEvents = 1000, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
+//int Fun4All_G4_EicDirc(const int nEvents = 1000, const int LUT = 0, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
+
+//int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
+
+int Fun4All_G4_EicDirc(const int nEvents = 1000, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
+
 {
   ///////////////////////////////////////////
   // Make the Server
@@ -30,37 +37,49 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
   se->Verbosity(0);
 
   recoConsts *rc = recoConsts::instance();
-  //  rc->set_IntFlag("RANDOMSEED", 12345); // if you want to use a fixed seed
+  rc->set_IntFlag("RANDOMSEED", 12345); // if you want to use a fixed seed
   // PHG4ParticleGenerator generates particle
   // distributions in eta/phi/mom range
-  
-  PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
-  gen->set_pid(pid);
-  gen->set_vtx(0, 1.75, 0);
-  gen->set_eta_range(eta, eta);
-  gen->set_z_range(0., 0.);
-  gen->set_phi_range(0., 0.);
-  //gen->set_phi_range(0., 2*TMath::Pi());
-  gen->set_mom_range(6.0, 6.0); // GeV/c
-  se->registerSubsystem(gen);
-  
 
-  /*PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
-  gen->set_name("opticalphoton");
-  gen->set_vtx(72.96, 1.75, -255.44);
-  gen->set_eta_range(-4.0, 0.);
-  gen->set_z_range(-255.44, -255.44);
-  gen->set_phi_range(0., 2*TMath::Pi());
-  gen->set_mom_range(3.18e-09, 3.18e-09); // GeV/c                                                                              
-  se->registerSubsystem(gen);
-  */
-  /*PHG4ParticleGun *gun = new PHG4ParticleGun();
+  /*  PHG4ParticleGun *gun = new PHG4ParticleGun();
   gun->set_name("opticalphoton");  
-  gun->set_vtx(75, 0, -255.49 + 0.05);
-  gun->set_mom(-2.05e-09, 1.60e-09, -1.83e-09);
+  gun->set_vtx(72.96, 1.75, -255.44);
+  //gun->set_mom(1.89982e-09, 1.41771e-09 , -2.11971e-09); // top-left
+  //gun->set_mom(-0.495767e-09, -2.36652e-09 , -2.06548e-09); // bottom-right
+  //gun->set_mom(0.960917e-09, 2.37134e-09 , -1.88833e-09); // left
+  //gun->set_mom(0.120717e-09, -2.38017e-09 , -2.10538e-09); // right
+  gun->set_mom(-1.94054e-09, -2.19653e-09, -1.23367e-09); // pathid = 95341
+  //gun->set_mom(-0.300677e-09, 1.84231e-09, -2.57447e-09); // pathid = 932
+  //gun->set_mom(2.10111e-09, -0.59692e-09, -2.31115e-09); // pathid = 94
   se->registerSubsystem(gun);
   */
+  
+  //if(LUT)
+  {
+      PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator();
+      gen->add_particles("opticalphoton", 1);
+      gen->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform, PHG4SimpleEventGenerator::Uniform, PHG4SimpleEventGenerator::Uniform);
+      gen->set_vertex_distribution_mean(72.96, 1.75, -255.44);                                                      
+      gen->set_vertex_distribution_width(0., 0., 0.);
+      gen->set_theta_range(90.0*(TMath::Pi()/180.), 270.0*(TMath::Pi()/180.));      
+      gen->set_phi_range(-M_PI, M_PI);
+      gen->set_p_range(3.18e-09, 3.18e-09, 0.);
+      se->registerSubsystem(gen);
+      }
 
+    //else
+  /*{
+      PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
+      gen->set_pid(pid);
+      gen->set_vtx(0, 1.75, 0);
+      gen->set_eta_range(eta, eta);
+      gen->set_z_range(0., 0.);
+      gen->set_phi_range(0., 0.);
+      //gen->set_phi_range(0., 2*TMath::Pi());
+      gen->set_mom_range(6.0, 6.0); // GeV/c
+      se->registerSubsystem(gen);
+      }*/
+  
   PHG4Reco *g4Reco = new PHG4Reco();
   //g4Reco->set_field(1.5);  // 1.5 T solenoidal field
   g4Reco->set_field(0.);
@@ -87,7 +106,7 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
 
   eicdirc->set_int_param("disable_photon_sim", 0);  // if true, disable photon simulations
 
-  eicdirc->SuperDetector("DIRC");
+  eicdirc->SuperDetector("hpDIRC");
   eicdirc->SetActive();
   //eicdirc->OverlapCheck(true);
   eicdirc->Verbosity(1);
@@ -114,10 +133,21 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
   hitntup->AddNode("DIRC",0);
   se->registerSubsystem(hitntup);
   */
-  G4DIRCTree *dirc_tree = new G4DIRCTree("G4DIRCTree", outputPath + "/" + outputFile);
-  dirc_tree->AddNode("DIRC",0);
-  se->registerSubsystem(dirc_tree);
-    
+  
+  //if(LUT) 
+  {
+      G4LUTTree *lut_tree = new G4LUTTree("G4LUTTree", outputPath + "/" + outputFile);
+      lut_tree->AddNode("hpDIRC",0);
+      se->registerSubsystem(lut_tree);
+  }
+  
+    //else
+    /*{
+      G4DIRCTree *dirc_tree = new G4DIRCTree("G4DIRCTree", outputPath + "/" + outputFile);
+      dirc_tree->AddNode("hpDIRC",0);
+      se->registerSubsystem(dirc_tree);
+      }*/
+
   //---------------------------
   // output DST file for further offlien analysis
   //---------------------------
@@ -126,6 +156,18 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const in
     Fun4AllOutputManager *out = new Fun4AllDstOutputManager("DSTOUT", outputPath + "/" + DSToutfile);
     se->registerOutputManager(out);
   }
+
+  // save a comprehensive  evaluation file
+  /*PHG4DSTReader *ana = new PHG4DSTReader("DSTReaderOutput.root");
+  ana->set_save_particle(true);
+  ana->set_load_all_particle(true);
+  ana->set_load_active_particle(true);
+  ana->set_save_vertex(true);
+
+  ana->Verbosity(1);
+  ana->AddNode("hpDIRC");
+  se->registerSubsystem(ana);
+  */
   Fun4AllInputManager *in = new Fun4AllDummyInputManager("JADE");
   se->registerInputManager(in);
 
