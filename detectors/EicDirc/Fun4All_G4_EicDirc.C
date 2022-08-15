@@ -25,9 +25,9 @@ R__LOAD_LIBRARY(libg4eicdirc.so)
 
 //int Fun4All_G4_EicDirc(const int nEvents = 1000, const int LUT = 0, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
 
-//int Fun4All_G4_EicDirc(const int nEvents = 1000, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
+//int Fun4All_G4_EicDirc(const int nEvents = 1000, const int Barnumber = 0, const double eta = 0., const int pid = 211, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
 
-int Fun4All_G4_EicDirc(const int nEvents = 1000, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
+int Fun4All_G4_EicDirc(const int nEvents = 1000, const int Barnumber = 0, const string &outputFile = "G4DIRCTree.root", const string &outputPath = ".", const char *DSToutfile = NULL)
 
 {
   ///////////////////////////////////////////
@@ -59,23 +59,26 @@ int Fun4All_G4_EicDirc(const int nEvents = 1000, const string &outputFile = "G4D
       PHG4SimpleEventGenerator *gen = new PHG4SimpleEventGenerator();
       gen->add_particles("opticalphoton", 1);
       gen->set_vertex_distribution_function(PHG4SimpleEventGenerator::Uniform, PHG4SimpleEventGenerator::Uniform, PHG4SimpleEventGenerator::Uniform);
-      gen->set_vertex_distribution_mean(72.96, 1.75, -255.44);                                                      
+      //gen->set_vertex_distribution_mean(72.96, 1.7575, -255.44);                                                      
+      gen->set_vertex_distribution_mean(72.96, -15.8175 + (3.515 * Barnumber), -255.44); 
       gen->set_vertex_distribution_width(0., 0., 0.);
       gen->set_theta_range(90.0*(TMath::Pi()/180.), 270.0*(TMath::Pi()/180.));      
       gen->set_phi_range(-M_PI, M_PI);
       gen->set_p_range(3.18e-09, 3.18e-09, 0.);
       se->registerSubsystem(gen);
-      }
+  }
 
     //else
   /*{
       PHG4ParticleGenerator *gen = new PHG4ParticleGenerator("PGENERATOR");
       gen->set_pid(pid);
-      gen->set_vtx(0, 1.75, 0);
+      //gen->set_vtx(0, -15.8175 + (3.515 * Barnumber), 0);
+      gen->set_vtx(0,0,0);
       gen->set_eta_range(eta, eta);
       gen->set_z_range(0., 0.);
-      gen->set_phi_range(0., 0.);
-      //gen->set_phi_range(0., 2*TMath::Pi());
+      //gen->set_phi_range(0., 0.);
+      //gen->set_phi_range(-15*TMath::DegToRad(),15*TMath::DegToRad());
+      gen->set_phi_range(0., 2*TMath::Pi());
       gen->set_mom_range(6.0, 6.0); // GeV/c
       se->registerSubsystem(gen);
       }*/
